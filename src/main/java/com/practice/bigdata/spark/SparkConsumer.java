@@ -2,6 +2,9 @@ package com.practice.bigdata.spark;
 
 
 import kafka.serializer.StringDecoder;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.*;
 import org.apache.spark.streaming.kafka.KafkaUtils;
@@ -13,16 +16,39 @@ import java.util.*;
  */
 public class SparkConsumer {
 
-    public static void main (String [] args) {
-        SparkConsumer consumer = new SparkConsumer();
-        try {
-            consumer.consume("demo","localhost:9092" , "big-data-demo");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    SparkSession sparkSession;
+
+    public SparkConsumer(SparkSession sparkSession) {
+        this.sparkSession = sparkSession;
     }
 
-    public void consume(String topic, String broker,  String appName) throws InterruptedException {
+    public static void main(String[] args) {
+
+        SparkSession sparkSession = SparkSession.builder()
+                .master("local")
+                .appName("Word Count")
+//                .config("spark.some.config.option", "some-value")
+                .getOrCreate();
+
+        SparkConsumer consumer = new SparkConsumer(sparkSession);
+        consumer.consumerTopic("provide", "localhost:9092");
+    }
+
+    public void consumerTopic(String topic, String broker) {
+
+        Dataset<Row> df = sparkSession.readStream()
+                .format("kafka")
+                .option("kafka.bootstrap.servers", broker)
+                .option("subscribe", topic)
+                .load();
+
+        df.printSchema();
+
+        df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)");
+
+    }
+
+    public void consume(String topic, String broker, String appName) throws InterruptedException {
         JavaStreamingContext ssc = new JavaStreamingContext("local[*]", appName, new Duration(2000));
 
         Set<String> topics = new HashSet<>();
