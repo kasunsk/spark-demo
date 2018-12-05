@@ -42,8 +42,8 @@ public class SparkConsumer {
                 .option("subscribe", topic)
                 .load();
 
+        System.out.println("printing schema ......");
         df.printSchema();
-
         df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)");
 
     }
