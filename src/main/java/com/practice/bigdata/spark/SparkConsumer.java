@@ -40,11 +40,15 @@ public class SparkConsumer {
                 .format("kafka")
                 .option("kafka.bootstrap.servers", broker)
                 .option("subscribe", topic)
+                .option("startingOffsets", "earliest")
                 .load();
 
         System.out.println("printing schema ......");
         df.printSchema();
         df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)");
+
+        System.out.println("writing to console ......");
+        df.writeStream().format("console").start();
 
     }
 

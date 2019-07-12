@@ -1,0 +1,16 @@
+{
+  "Father": {
+    "name": "Nimal",
+    "age": 50,
+    "children": [
+      {
+        "name": "Saman",
+        "age": 15
+      },
+      {
+        "name": "Kamal",
+        "age": 20
+      }
+    ]
+  }
+}
