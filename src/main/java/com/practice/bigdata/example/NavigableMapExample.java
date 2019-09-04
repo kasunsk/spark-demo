@@ -1,7 +1,5 @@
 package com.practice.bigdata.example;
 
-import avro.shaded.com.google.common.primitives.Bytes;
-import org.apache.commons.collections.map.HashedMap;
 
 import java.util.*;
 
